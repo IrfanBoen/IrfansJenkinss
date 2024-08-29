@@ -4,7 +4,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                // Example of using Maven
+		// Example of MVN
                 // sh 'mvn clean package'
             }
         }
@@ -13,49 +13,65 @@ pipeline {
                 echo 'Running Unit and Integration Tests...'
                 // sh 'mvn test'
             }
+            post {
+                always {
+                    echo 'Sending email after Unit and Integration Tests...'
+                    mail to: 'IrfanBoenardi123@gmail.com',
+                         subject: "Unit and Integration Tests",
+                         body: "Unit and Integration Tests stage for build ${currentBuild.fullDisplayName} is complete and: ${currentBuild.result}. Check the console output at ${env.BUILD_URL}."
+                }
+            }
         }
         stage('Code Analysis') {
             steps {
                 echo 'Performing Code Analysis...'
-                // Example of using SonarQube
+		// Example of sonarqube
                 // sh 'sonar-scanner'
             }
         }
         stage('Security Scan') {
             steps {
                 echo 'Performing Security Scan...'
-                // Example of using OWASP Dependency-Check
+		// example of dependency check
                 // sh 'dependency-check.sh'
+            }
+            post {
+                always {
+                    echo 'Sending email after Security Scan...'
+                    mail to: 'IrfanBoenardi123@gmail.com',
+                         subject: "Security Scan",
+                         body: "Security Scan stage for build ${currentBuild.fullDisplayName} is completed and: ${currentBuild.result}. Check the console output at ${env.BUILD_URL}."
+                }
             }
         }
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploying to Staging...'
-                // Example of deploying
+		// example of deploying to staging
                 // sh 'deploy.sh staging'
             }
         }
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running Integration Tests on Staging...'
-                // Example of running tests on the staging server
+		// example of running tests on staging
                 // sh 'mvn verify -Pstaging'
             }
         }
         stage('Deploy to Production') {
             steps {
                 echo 'Deploying to Production...'
-                // Example of deploying to Production
+		// example of deploying to production
                 // sh 'deploy.sh production'
             }
         }
     }
     post {
         always {
-            echo 'Sending notification emails...'
-            mail to: 'IrfanBoenardi1@gmail.com',
-                 subject: "Jenkins Pipeline ${currentBuild.fullDisplayName}",
-                 body: "The build ${currentBuild.fullDisplayName} is: ${currentBuild.result}. Check console output result at ${env.BUILD_URL}."
+            echo 'Sending final notification email...'
+            mail to: 'IrfanBoenardi123@gmail.com',
+                 subject: "Jenkins Pipeline - Final Status",
+                 body: "The build ${currentBuild.fullDisplayName} has completed with status: ${currentBuild.result}. Check the console output at ${env.BUILD_URL}."
         }
     }
 }
